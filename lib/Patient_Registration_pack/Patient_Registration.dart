@@ -1,0 +1,997 @@
+import 'package:chopper/chopper.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_patient_app/ApiChopper/BaseUrl.dart';
+import 'package:flutter_patient_app/ApiChopper/my_service_post.dart';
+import 'package:flutter_patient_app/CommonClass/CommonStrAndKey.dart';
+import 'package:flutter_patient_app/NewLogin/Model/PatientLoginResponse.dart';
+import 'package:flutter_patient_app/PatientViewCategories/MasterCategoriesPatient.dart';
+import 'package:flutter_patient_app/Patient_Registration_pack/NewRegistrationRequest.dart';
+import 'package:flutter_patient_app/Patient_Registration_pack/NewRegistrationResponse.dart';
+import 'package:flutter_patient_app/Patient_Registration_pack/OTPResponse.dart';
+import 'package:flutter_patient_app/UnRegistrationAppmt/UnResigrationAppmtRequest.dart';
+import 'package:flutter_patient_app/UnRegistrationAppmt/UnResigrationAppmtResponse.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'OTPRequest.dart';
+const Color _colorOne = Color(0x33000000);
+const Color _colorTwo = Color(0x24000000);
+const Color _colorThree = Color(0x1F000000);
+String valueName="",valueAge="0",valueMobile="",valueGander="2",DateOfBirth="",valueDOB="",typeAge="year",valueAddress="",valueEmail="";
+
+var ctrName = TextEditingController();
+var ctrMobile = TextEditingController();
+var ctrEmail = TextEditingController();
+var ctrDOB = TextEditingController();
+var ctrGander = TextEditingController();
+var ctrAddress = TextEditingController();
+var ctrOTP = TextEditingController();
+List<RadioModel> radioList= <RadioModel>[];
+late BuildContext confContext,loadingContext,layoutContext;
+class Patient_Registration extends StatefulWidget {
+  String? DoctorId="";
+  String? AppmtDate="";
+  String? AppmtTime="";
+  String? dotNetDateFormat="";
+
+  Patient_Registration({
+    this.DoctorId,
+    this.AppmtDate,
+    this.AppmtTime,
+    this.dotNetDateFormat,
+    Key? key,
+  }) : super(key: key);
+  @override
+  _UnRegistrationState createState() => _UnRegistrationState(
+    DoctorId:this.AppmtDate,
+    AppmtDate:this.AppmtDate,
+    AppmtTime:this.AppmtTime,
+    dotNetDateFormat: this.dotNetDateFormat,
+
+  );
+}
+
+class _UnRegistrationState
+    extends State<Patient_Registration> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  String? titleSelection = "";
+  String? DoctorId="";
+  String? AppmtDate="";
+  String? AppmtTime="";
+  String? dotNetDateFormat="";
+
+  _UnRegistrationState({
+    this.DoctorId,
+    this.AppmtDate,
+    this.AppmtTime,
+    this.dotNetDateFormat,
+
+  }) ;
+  final Map<int, Widget> logoWidgets = const <int, Widget>{
+    0: Text('Male'),
+    1: Text('Female'),
+    /*2: Text('Logo 3'),*/
+  };
+  final Map<int, Widget> ageWidgets = const <int, Widget>{
+    0: Text('Year(s)'),
+    1: Text('Month(s)'),
+    2: Text('day(s)'),
+    /*2: Text('Logo 3'),*/
+  };
+  final Map<int, Widget> icons = const <int, Widget>{
+    0: Center(
+      child: FlutterLogo(
+       // colors: Colors.indigo,
+        size: 200.0,
+      ),
+    ),
+    1: Center(
+      child: FlutterLogo(
+        //colors: Colors.teal,
+        size: 200.0,
+      ),
+    ),
+    /* 2: Center(
+      child: FlutterLogo(
+        colors: Colors.cyan,
+        size: 200.0,
+      ),
+    ),*/
+  };
+  int sharedValue = 0;
+  int AgeValue = 0;
+  @override
+  void initState() {
+    // TODO: implement initState
+    radioList= <RadioModel>[];
+    radioList.add(new RadioModel(true, 'Mr', 'FID'));
+    radioList.add(new RadioModel(false, 'Mrs', 'SEID'));
+    radioList.add(new RadioModel(false, 'Ms', 'THID'));
+    radioList.add(new RadioModel(false, 'Dr', 'FOID'));
+    radioList.add(new RadioModel(false, 'Baby', 'FID'));
+    radioList.add(new RadioModel(false, 'Master', 'SID'));
+
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    ctrName.text = "";
+    ctrEmail.text = "";
+    ctrMobile.text = "";
+    ctrDOB.text = "";
+    ctrGander.text = "";
+    ctrAddress.text = "";
+  }
+
+  void callDatePicker() async {
+    var order = await getDate();
+    var formatter = new DateFormat('dd-MM-yyyy');
+    String formatted = formatter.format(order!);
+    ctrDOB.text=formatted;
+    DateOfBirth=ctrDOB.text.toString();
+    /* setState(() {
+      finaldate = order;
+    });*/
+  }
+  Future<DateTime?> getDate() {
+    // Imagine that this function is
+    // more complex and slow.
+    return showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1918),
+      lastDate: DateTime(2030),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light(),
+          child: child!,
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+     layoutContext=context;
+    return  Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          'Registration',
+          style: TextStyle(fontSize: 16.0),
+        ),
+
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF17ead9),
+                    Color(0xFF6078ea)
+                  ]),
+              borderRadius: BorderRadius.circular(6.0),
+              boxShadow: [
+                BoxShadow(
+                    color: Color(0xFF6078ea).withOpacity(.3),
+                    offset: Offset(0.0, 8.0),
+                    blurRadius: 8.0)
+              ]),
+        ),
+
+      ),
+      body: new Center(
+        child: new Container(
+          margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                    color: Color.fromRGBO(143, 148, 251, .2),
+                    blurRadius: 20.0,
+                    offset: Offset(0, 10)
+                )
+              ]
+          ),
+          child:SingleChildScrollView(
+            child:
+
+            Column(
+              children: <Widget>[
+
+                new Container(
+
+                  margin: EdgeInsets.only(bottom: 10),
+                  padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFF17ead9),
+                            Color(0xFFffffff)
+                          ]),
+                      borderRadius: BorderRadius.circular(6.0),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Color(0xFF6078ea).withOpacity(.3),
+                            offset: Offset(0.0, 8.0),
+                            blurRadius: 8.0)
+                      ]),
+                  child: new SizedBox(
+
+                      child: new Column(children: <Widget>[
+
+                        new Center(
+                          child: new Text("Unregistration Patient",
+                            style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color:Colors.white ),),
+                        ),
+
+                      ],)
+
+                  ),
+
+                ),
+                new Container(
+                    decoration: myBoxDecoration(),
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    margin: EdgeInsets.only(bottom: 20),
+                    child: new Column(
+                      children: [
+                        new Container(
+                          child: new Text(
+                            "Title",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          margin: EdgeInsets.only(left: 10),
+                          alignment: Alignment.topLeft,
+                        ),
+                        new Container(
+                          height: 30,
+                          margin: EdgeInsets.only(left: 10),
+                          child: new ListView.builder(
+                            itemCount: radioList.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder:
+                                (BuildContext context, int index) {
+                              return new InkWell(
+                                //highlightColor: Colors.red,
+                                  splashColor:Color(0xFF17ead9),
+                                  onTap: () {
+                                    setState(() {
+                                      radioList.forEach((element) =>
+                                      element.isSelected = false);
+                                      radioList[index].isSelected =
+                                      true;
+                                      if (index == 0) {
+                                        titleSelection = "Mr";
+                                      } else if (index == 1) {
+                                        titleSelection = "Mrs";
+                                      } else if (index == 2) {
+                                        titleSelection = "Ms";
+                                      }  else if (index == 3) {
+                                        titleSelection = "Dr";
+                                      } else if (index == 4) {
+                                        titleSelection = "Baby";
+                                      }else {
+                                        titleSelection = "Master";
+                                      }
+                                    });
+                                  },
+                                  child: new Container(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Center(
+                                              child: RadioItem(
+                                                  radioList[index]),
+                                            ),
+                                            flex: 1,
+                                          ),
+                                        ],
+                                      )));
+                            },
+                          ),
+                        ),
+                      ],
+                    )),
+                new Container(
+                  child: new TextFormField(
+                    controller: ctrName,
+                    decoration: InputDecoration(
+                      labelText: 'Patient Name',
+                      contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6.0)),
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.only(top: 5), // add padding to adjust icon
+                        child: Icon(Icons.person),),
+                    ),
+                    keyboardType: TextInputType.text,
+                    onChanged: (String value)
+                    {
+                      //setState(() => doctorId = value);
+                      valueName=value;
+                    },
+                  ),
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 20.0),
+                ),
+
+                new Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 20.0),
+                  child: new TextFormField(
+                    //obscureText: !_passwordVisible,
+                    controller: ctrMobile,
+                    decoration: InputDecoration(
+                      labelText: 'Mobile',
+                      contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6.0)),
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.only(top: 5), // add padding to adjust icon
+                        child: Icon(Icons.phone),),
+                    ),
+
+                    keyboardType: TextInputType.phone,
+                    onChanged: (String value)
+                    {
+                      valueMobile=value;
+                      //(() => password = value);
+                    },
+
+                  ),
+                ),
+                new Container(
+                  width: double.infinity,
+
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 20.0),
+                  child: new TextFormField(
+                    //obscureText: !_passwordVisible,
+                    controller: ctrEmail,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6.0)),
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.only(top: 5), // add padding to adjust icon
+                        child: Icon(Icons.email),),
+                    ),
+
+                    keyboardType: TextInputType.emailAddress,
+                    onChanged: (String value)
+                    {
+                      valueMobile=value;
+                      //(() => password = value);
+                    },
+
+                  ),
+                ),
+               /* new Container(
+                  padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                  child: new Column(
+                    children: <Widget>[
+                      new TextFormField(
+
+                        decoration: InputDecoration(
+                          labelText: 'Age',
+
+                          contentPadding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 15.0),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6.0)),
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (String value)
+                        {
+                          valueAge=value;
+                          //setState(() => doctorId = value);
+                        },
+                      ),
+
+                      customRadioButtonForAge(),
+
+
+                    ],
+
+                  ),
+                  decoration: myBoxDecoration(),
+                ),*/
+
+                 new Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.fromLTRB(0, 0, 0, 20.0),
+                    child:
+                    new TextFormField(
+                      //obscureText: !_passwordVisible,
+
+                      controller: ctrDOB,
+                      readOnly: true,
+                      showCursor: true,
+                      onTap: ()
+                      {
+                        callDatePicker();
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'DOB',
+                        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6.0)),
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.only(top: 5), // add padding to adjust icon
+                          child: Icon(Icons.date_range),),
+
+                      ),
+
+                      keyboardType: TextInputType.number,
+
+
+
+                    ),
+                  ),
+
+                new Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 20.0),
+                  child: new TextFormField(
+                    //obscureText: !_passwordVisible,
+                    controller: ctrAddress,
+                    decoration: InputDecoration(
+                      labelText: 'Address',
+                      contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6.0)),
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.only(top: 5), // add padding to adjust icon
+                        child: Icon(Icons.home),),
+
+                    ),
+
+                    keyboardType: TextInputType.text,
+                    onChanged: (String value)
+                    {
+                      valueMobile=value;
+                      //(() => password = value);
+                    },
+
+                  ),
+                ),
+                new Container(
+                  height: 55,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: customRadioButton(),
+                  decoration: myBoxDecoration(),
+                ),
+
+                new Container(
+                  width: 290,
+                  height: 50,
+                  margin: EdgeInsets.only(top: 10),
+                  child: InkWell(
+                    child:
+
+                    Container(
+                      width:290,
+                      height:50,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFF17ead9),
+                                Color(0xFF6078ea)
+                              ]),
+                          borderRadius: BorderRadius.circular(6.0),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Color(0xFF6078ea).withOpacity(.3),
+                                offset: Offset(0.0, 8.0),
+                                blurRadius: 8.0)
+                          ]),
+                      child:
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            if(validation(ctrName.text.toString(), ctrMobile.text.toString(), ctrEmail.text.toString(), ctrDOB.text.toString(), ctrAddress.text.toString()))
+                            {
+                              requestForOtp(ctrMobile.text.toString());
+                            }
+                          },
+                          child:
+
+                          Center(
+                            child: Text("Submit",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: "Poppins-Bold",
+                                    fontSize: 18,
+                                    letterSpacing: 1.0)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),),
+               /* new Container(
+                  width: 600,
+                  height: 50,
+                  margin: EdgeInsets.only(top: 20),
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFF17ead9),
+                            Color(0xFF6078ea)
+                          ]),
+                      borderRadius: BorderRadius.circular(6.0),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Color(0xFF6078ea).withOpacity(.3),
+                            offset: Offset(0.0, 8.0),
+                            blurRadius: 8.0)
+                      ]),
+                  child: new RaisedButton(
+
+
+                    textColor: Colors.white,
+
+                    child: Text('Submit',
+
+                      style: TextStyle(
+                        background: Paint()
+                          ..color = Colors.transparent,
+                        // decoration: TextDecoration(BlendMode.color))
+
+                      ),
+
+                    ),
+
+                    onPressed: () {
+
+                      if(validation(ctrName.text.toString(), ctrMobile.text.toString(), ctrEmail.text.toString(), ctrDOB.text.toString(), ctrAddress.text.toString()))
+                      {
+                        requestForOtp(ctrMobile.text.toString());
+                      }
+
+                    },
+
+
+                  ),
+                ),*/
+
+
+              ],
+            ),
+          ),
+        ),
+
+      ),
+
+
+    );
+
+
+  }
+
+  BoxDecoration myBoxDecoration() {
+    return BoxDecoration(
+      border: Border.all(
+        width: 1, //                   <--- border width here
+      ),
+      borderRadius: BorderRadius.circular(6.0),
+    );
+  }
+  Widget customRadioButton()
+  {
+    return new Container(
+      child:
+      SizedBox(
+        width: 600.0,
+        height: 60,
+        child: CupertinoSegmentedControl<int>(
+          children: logoWidgets,
+          onValueChanged: (int val) {
+            setState(() {
+              sharedValue = val;
+              if (val == 0) {
+                valueGander = "2";
+              } else {
+                valueGander = "1";
+              }
+            });
+          },
+          groupValue: sharedValue,
+        ),
+      ),
+
+
+    );
+  }
+
+  Widget customRadioButtonForAge()
+  {
+    return
+      SizedBox(
+        width: 600.0,
+        height: 40,
+
+        child: CupertinoSegmentedControl<int>(
+
+          children: ageWidgets,
+          onValueChanged: (int val) {
+            setState(() {
+              AgeValue = val;
+              if (val == 0) {
+                typeAge="year";
+              } else if (val == 1) {
+                typeAge="month";
+              } else if (val == 2) {
+                typeAge="day";
+              }
+            });
+          },
+          groupValue: AgeValue,
+
+        ),
+
+      );
+
+  }
+
+  bool  validation(String name,String mobile, String email,String Dob , String address)
+  {
+    bool valid = true;
+    String toastMsg="";
+    if (name == "" || name == "null" || name == null) {
+      valid=false;
+      toastMsg="Please enter name";
+
+    } else if (mobile == "" || mobile == "null" || mobile == null) {
+      valid=false;
+      toastMsg="Please enter mobile no";
+
+    } else  if (mobile.length<10) {
+      valid=false;
+      toastMsg="Please enter valid mobile no";
+    }else if (email == "" || email == "null" || email == null) {
+      valid=false;
+      toastMsg="Please enter email";
+
+    }  else if (Dob == "" || Dob == "null" || Dob == null) {
+      valid=false;
+      toastMsg="Please enter DOB ";
+
+    }else if (address == "" || address == "null" || address == null) {
+      valid=false;
+      toastMsg="Please enter address ";
+
+    }
+   /* else if (typeAge != "" && typeAge != "null" && typeAge != null) {
+      int intAge=int.parse(age);
+      if (typeAge == "year") {
+        if(intAge<1||intAge>100)
+        {
+          toastMsg="Please enter valid year(s) ";
+          valid=false;
+        }
+
+      } else if (typeAge == "month") {
+        if(intAge<1||intAge>12)
+        {
+          toastMsg="Please enter valid month(s) (Less 13)";
+          valid=false;
+        }
+
+      } else if (typeAge == "day") {
+        if(intAge<1||intAge>31)
+        {
+          toastMsg="Please enter valid day(s) ";
+          valid=false;
+        }
+      }
+    }*/
+   if(toastMsg.isNotEmpty) {
+     _scaffoldKey.currentState!.showSnackBar(SnackBar(
+       content: Text("" + toastMsg),
+       duration: Duration(seconds: 3),
+     ));
+   }
+    return valid;
+  }
+
+  Future requestForOtp(String strMobile) async {
+
+    String url=BasicUrl.sendUrl();
+    final myService = MyServicePost.create(url);
+    OTPRequest setObj=new OTPRequest();
+    setObj.mobileNo=""+strMobile;
+    print("Request  \n" + setObj.toJson().toString());
+    OTPRequest obj=new OTPRequest.fromJson(setObj.toJson());
+    Response<OTPResponse> response = (await myService.GenerateOTPForSignup(obj));
+    print(response.body);
+    var post = response.body;
+    if(response!=null)
+    {
+      if(response.body!.status!.toString().toLowerCase()=="success"||response.body!.status!.toString().toLowerCase()=="true")
+      {
+        /*  Navigator.pop(dialogContext);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => MasterCategoriesPatient(
+              pos: 0,
+              PatientDetails: response.body.patientList.elementAt(0),
+            )));*/
+        _scaffoldKey.currentState!.showSnackBar(SnackBar(
+          content: Text("" + response.body!.errorMessage.toString()),
+          duration: Duration(seconds: 7),
+        ));
+        _ConformationOfOTP(""+response.body!.oTPno!.toString());
+
+      }else {
+        _scaffoldKey.currentState!.showSnackBar(SnackBar(
+          content: Text("" + response.body!.errorMessage.toString()),
+          duration: Duration(seconds: 3),
+        ));
+      }
+
+    }
+
+  }
+
+  Future forRegistration(String strOTP) async {
+    Navigator.pop(confContext);
+    _onLoading();
+    String url=BasicUrl.sendUrl();
+    final myService = MyServicePost.create(url);
+    NewRegistrationRequest setObj=new NewRegistrationRequest();
+     setObj.titleId="1";
+    setObj.hospitalLocationId="1";
+    setObj.facilityID="3";
+    setObj.firstName=""+ctrName.text;
+    setObj.mobile=""+ctrMobile.text;
+    setObj.email=""+ctrEmail.text;
+    setObj.gender=""+valueGander;
+    var formatter = new DateFormat('dd-MM-yyyy');
+    var formatterSend = new DateFormat('yyyy-MM-dd');
+    DateTime dataDate = formatter.parse(ctrDOB.text.toString());
+    String dataStr = formatter.format(dataDate);
+    setObj.dOB=""+dataStr;
+    setObj.address=""+ctrAddress.text;
+    setObj.oTP=""+strOTP;
+    print("Request  \n" + setObj.toJson().toString());
+    NewRegistrationRequest obj=new NewRegistrationRequest.fromJson(setObj.toJson());
+    Response<NewRegistrationResponse> response = (await myService.MobSaveRegistrationForPatient(obj));
+    print(response.body);
+    var post = response.body;
+    if(response!=null)
+    {
+      if(response.body!.status!.toString().toLowerCase()=="success")
+      {
+        Navigator.pop(loadingContext);
+        PatientList data=setPatientDetails(response.body!);
+        saveData(data);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => MasterCategoriesPatient(
+              pos: 0,
+              PatientDetails: data,
+            )));
+        _scaffoldKey.currentState!.showSnackBar(SnackBar(
+          content: Text("" + response.body!.errorMessage!.toString()),
+          duration: Duration(seconds: 3),
+        ));
+        }else {
+          _scaffoldKey.currentState!.showSnackBar(SnackBar(
+            content: Text("" + response.body!.errorMessage!.toString()),
+            duration: Duration(seconds: 3),
+          ));
+        }
+
+    }
+
+  }
+
+  void _onLoading() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        loadingContext=context;
+        return Dialog(
+            child: new Container(
+              height: 170,
+              width: 100,
+              decoration: new BoxDecoration(
+                shape: BoxShape.rectangle,
+                color: const Color(0xFFFFFF),
+                borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
+              ),
+              child: new Center(
+                child: new Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    new CircularProgressIndicator(),
+                    new Text("Loading"),
+                  ],
+                ),
+              ),
+            ));
+      },
+    );
+
+  }
+  Future<void> _ConformationOfOTP(String strOtp) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        confContext=context;
+        return AlertDialog(
+          title: Text('Enter OTP'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+               // Text(""+aptMsg),
+                new Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child:   new TextFormField(
+                    //obscureText: !_passwordVisible,
+                    controller: ctrOTP,
+                    decoration: InputDecoration(
+                      labelText: 'Enter OTP',
+                      contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6.0)),
+
+                    ),
+
+                    keyboardType: TextInputType.number,
+                    onChanged: (String value)
+                    {
+
+                    },
+
+                  ),
+                )
+
+
+              ],
+            ),
+          ),
+          actions: <Widget>[
+           /* FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),*/
+            FlatButton(
+              child: Text('Submit'),
+              onPressed: () {
+                ctrOTP.text=strOtp;
+                forRegistration(ctrOTP.text.toString());
+              /*  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (mContext) => Dashbroad()),
+                );*/
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  PatientList setPatientDetails( NewRegistrationResponse details)
+  {
+    PatientList data=new PatientList();
+
+    data.patientName=details.patientName.toString();
+    data.mobileNo=details.mobileNo.toString();
+    data.email=details.email.toString();
+    data.age=details.age.toString();
+    data.hISRegistrationId=details.hISRegistrationId.toString();
+    data.hospitalID=details.hospitalID.toString();
+    data.facilityId=details.facilityId.toString();
+    data.encounterId=details.encounterId.toString();
+    data.gender=details.gender.toString();
+    data.role=details.role.toString();
+    data.imagePath=details.imagePath.toString();
+    data.userType=details.userType.toString();
+    data.firstName=details.firstName.toString();
+    data.middleName=details.middleName.toString();
+    data.lasttName=details.lasttName.toString();
+    data.uHIDMSG=details.uHIDMSG.toString();
+    data.ageYear=details.ageYear.toString();
+    data.ageMonth=details.ageMonth.toString();
+    data.ageDays=details.ageDays.toString();
+    data.regId=details.regId.toString();
+    data.regNo=details.regNo.toString();
+    data.IsUnRegPat=details.isUnRegPat;
+    data.videoConsultationCode=details.videoConsultationCode.toString();
+    return data;
+  }
+
+  void saveData(PatientList IpPatientobject) async
+  {
+    final SharedPreferences setPatientInfo = await SharedPreferences.getInstance();
+    setPatientInfo.setString(CommonStrAndKey.loginId, "");
+    setPatientInfo.setString(CommonStrAndKey.password, "");
+    setPatientInfo.setString(CommonStrAndKey.registration_id, ""+IpPatientobject.regId.toString());
+    setPatientInfo.setString(CommonStrAndKey.registration_no, ""+IpPatientobject.regNo.toString());
+    setPatientInfo.setString(CommonStrAndKey.patient_name, ""+IpPatientobject.patientName.toString());
+    setPatientInfo.setString(CommonStrAndKey.hospital_id, IpPatientobject.hospitalID.toString());
+    setPatientInfo.setString(CommonStrAndKey.hospital_name, "PSRI Hospital");
+    setPatientInfo.setString(CommonStrAndKey.facility_id, IpPatientobject.facilityId.toString());
+    setPatientInfo.setString(CommonStrAndKey.gender, IpPatientobject.gender.toString());
+    setPatientInfo.setString(CommonStrAndKey.age, IpPatientobject.age.toString());
+    setPatientInfo.setString(CommonStrAndKey.email, IpPatientobject.email.toString());
+    setPatientInfo.setString(CommonStrAndKey.encounter_id, IpPatientobject.encounterId.toString());
+    setPatientInfo.setString(CommonStrAndKey.encounter_no, IpPatientobject.encounterId.toString());
+    setPatientInfo.setString(CommonStrAndKey.mobileNo, IpPatientobject.mobileNo.toString());
+    setPatientInfo.setString(CommonStrAndKey.patient_type, IpPatientobject.userType.toString());
+    setPatientInfo.setString(CommonStrAndKey.IsUnRegPat, "true");
+
+  }
+
+
+}
+class RadioItem extends StatelessWidget {
+  final RadioModel _item;
+
+  RadioItem(this._item);
+
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      margin: new EdgeInsets.all(2.0),
+      child: new Row(
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          new Container(
+            height: 30.0,
+            width: 60.0,
+            child: new Center(
+              child: new Text(_item.buttonText,
+                  style: new TextStyle(
+                      color: _item.isSelected ? Colors.white : Colors.black,
+                      //fontWeight: FontWeight.bold,
+                      fontSize: 12.0)),
+            ),
+            decoration: new BoxDecoration(
+              color: _item.isSelected ? Color(0xff6a6fde) : Colors.transparent,
+              border: new Border.all(
+                  width: 1.0,
+                  color: _item.isSelected ? Color(0xff6a6fde) : Colors.grey),
+              borderRadius: const BorderRadius.all(const Radius.circular(2.0)),
+            ),
+          ),
+          /* new Container(
+            margin: new EdgeInsets.only(left: 10.0),
+            child: new Text(_item.text),
+          )*/
+        ],
+      ),
+    );
+  }
+}
+
+class RadioModel {
+  bool isSelected;
+  final String buttonText;
+  final String text;
+
+  RadioModel(this.isSelected, this.buttonText, this.text);
+}

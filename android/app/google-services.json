@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "419301777811",
+    "project_id": "fluttervideo-f23de",
+    "storage_bucket": "fluttervideo-f23de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:419301777811:android:04bd6d1938c4f7e61f8866",
+        "android_client_info": {
+          "package_name": "com.psri_patient_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "419301777811-13a7j4cud6e096r5noho7u17e31ng19f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmTO-n-qa47ZM1neZW7PqzteJ35e7j04c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "419301777811-13a7j4cud6e096r5noho7u17e31ng19f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

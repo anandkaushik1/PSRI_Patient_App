@@ -1,0 +1,32 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 364 506.25">
+    <rect x="3.47" y="146.67" width="357.41" height="353.78" rx="31.68" style="fill:#fff" />
+    <path
+        d="M280.09,172.05h69s20.62,4.5,20.62,20.63V495.3s-3.62,20.25-22.12,20.25H47.34a27.06,27.06,0,0,1-20.5-20.75V193.05s.5-17.75,22-21h70.25V161.8H48.84s-29.25,1-32.25,31.75v298s-.25,31.25,33.5,34H346.84s33.25-2,33.75-33.75v-297s.5-32.25-34.75-33H279.59Z"
+        transform="translate(-16.59 -19.3)" style="fill:#1d1e21" />
+    <path d="M253.59,247.18l.5,81.75s-42.75,16.5-48.75,69.5H194.09s-7-54.25-50.25-68.75V247.93Z"
+        transform="translate(-16.59 -19.3)" style="fill:#1c1c20" />
+    <rect x="124.76" y="37.35" width="114.32" height="150.43" style="fill:#8bc6dd" />
+    <rect x="124.76" y="191.75" width="114.32" height="36.04" style="fill:#fcde7e" />
+    <path d="M149.14,254.51v71.62s43.35,22.31,44.69,62.92h8.68s1.83-42.5,45-63.59V254.51Z"
+        transform="translate(-16.59 -19.3)" style="fill:#aab1bb" />
+    <rect x="115.25" y="32" width="10.25" height="201.75" rx="5.12" style="fill:#1c1c20" />
+    <rect x="238.25" y="32" width="10.25" height="201.75" rx="5.12" style="fill:#1d1e21" />
+    <rect x="96.25" y="186.25" width="172.25" height="11" rx="5.5" style="fill:#1c1c20" />
+    <rect x="115.25" y="222.75" width="133.25" height="11" rx="5.5" style="fill:#1d1e21" />
+    <circle cx="181.75" cy="278.25" r="21.5" style="fill:#1c1c20" />
+    <circle cx="181.75" cy="278.25" r="12.5" style="fill:#eaf0f3" />
+    <rect x="177.24" y="293.25" width="9.51" height="79.75" style="fill:#1c1c20" />
+    <rect x="112.25" y="371.5" width="170.5" height="10.25" rx="5.12" style="fill:#1c1c20" />
+    <rect x="82" y="371.5" width="18.38" height="10.25" rx="5.12" style="fill:#1c1c20" />
+    <rect x="82" y="407.75" width="200.75" height="10.25" rx="5.12" style="fill:#1c1c20" />
+    <rect x="82" y="443" width="200.75" height="10.25" rx="5.12" style="fill:#1c1c20" />
+    <rect x="68.67" y="77.58" width="31.33" height="10.83" rx="5.42" style="fill:#1d1e21" />
+    <rect x="85.26" y="96.89" width="31.33" height="10.83" rx="5.42"
+        transform="translate(186.64 -17.92) rotate(90)" style="fill:#1d1e21" />
+    <rect x="166.17" y="10.25" width="31.33" height="10.83" rx="5.42" style="fill:#1d1e21" />
+    <rect x="182.76" y="29.55" width="31.33" height="10.83" rx="5.42"
+        transform="translate(216.8 -182.76) rotate(90)" style="fill:#1d1e21" />
+    <rect x="260.67" y="104.25" width="31.33" height="10.83" rx="5.42" style="fill:#1d1e21" />
+    <rect x="277.26" y="123.55" width="31.33" height="10.83" rx="5.42"
+        transform="translate(405.3 -183.26) rotate(90)" style="fill:#1d1e21" />
+</svg>

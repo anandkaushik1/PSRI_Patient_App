@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<svg data-name="Layer 1" height="66px" id="Layer_1" viewBox="0 0 124.19 122.79"
+    width="66px" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <style>.cls-1{fill:#5056ca;}</style>
+    </defs>
+    <title>mandatory-sign</title>
+    <path class="cls-1"
+        d="M304.18,220.26,271,264v.7l52.83-7v23.79L271,274.84v1l33.58,42-22,12.59-21.34-49h-.69l-22.39,49.33-19.95-12.59,33.24-42.68v-1.06l-51.78,7V257.69L251,264.34v-.7l-32.89-43,21.34-12.24,21.69,49h.7L283.19,208Z"
+        transform="translate(-199.58 -208.02)" />
+</svg>
